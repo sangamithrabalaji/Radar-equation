@@ -32,32 +32,47 @@ Procedure:
 
 **program:**
 ```
-Pt = 1000;
-G = 1000;
+clear;
+clf();
+
+c = 3e8;
+f = 3e9;
+lambda = c / f;
+G_dB = 30;
+G = 10^(G_dB / 10);
 sigma = 1;
-Ae = 10;
+Pt_fixed = 100e3;
+Pr_min = 1e-12;
 
-Smin = logspace(-12, -6, 100);
-Rmax = ((Pt * G * sigma * Ae) ./ (16 * %pi^2 .* Smin)).^(1/4);
-subplot(3,1,1);
-plot(Smin, Rmax);
+R = 1000:500:100000;
 
-Ppeak = linspace(100, 10000, 100);
-Rmax2 = ((Ppeak * G * sigma * Ae) ./ (16 * %pi^2 * 1e-10)).^(1/4);
-subplot(3,1,2);
-plot(Ppeak, Rmax2);
+num1 = Pt_fixed * (G^2) * (lambda^2) * sigma;
+den1 = ((4 * %pi)^3) * (R.^4);
+Pr = num1 ./ den1;
+Pr_dBm = 10 * log10(Pr / 1e-3);
 
-Gt = linspace(100, 2000, 100);
-Rmax3 = ((Pt * Gt * sigma * Ae) ./ (16 * %pi^2 * 1e-10)).^(1/4);
-subplot(3,1,3);
-plot(Gt, Rmax3);
+num2 = Pr_min * ((4 * %pi)^3) * (R.^4);
+den2 = (G^2) * (lambda^2) * sigma;
+Pt_req = num2 ./ den2;
+Pt_req_dBW = 10 * log10(Pt_req);
+
+subplot(2, 1, 1);
+plot(R / 1000, Pr_dBm, "r-", "linewidth", 2);
+xtitle("Received Power vs. Radar Range", "Range (km)", "Received Power (dBm)");
+xgrid();
+
+subplot(2, 1, 2);
+plot(R / 1000, Pt_req_dBW, "b-", "linewidth", 2);
+xtitle("Required Transmitted Power vs. Radar Range", "Range (km)", "Required Transmitted Power (dBW)");
+xgrid();
+
 ```
 **output:**
 
-<img width="600" height="600" alt="image" src="https://github.com/user-attachments/assets/363dea2b-9662-4d09-9eb1-9f508b9dcf38" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/37ed1349-ba4d-437a-a2a2-29ebf69f9056" />
 
 **Tabulation:**
-<img width="800" height="1000" alt="image" src="https://github.com/user-attachments/assets/da09f514-f77a-4ff1-a373-b5e4e3290855" />
+
 
 
 
